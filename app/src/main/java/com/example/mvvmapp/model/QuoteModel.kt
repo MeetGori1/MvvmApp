@@ -9,7 +9,9 @@ data class QuoteModel(
     @SerializedName("totalPages") var totalPages: Int? = null,
     @SerializedName("lastItemIndex") var lastItemIndex: Int? = null,
     @SerializedName("results") var results: ArrayList<Results> = arrayListOf()
-)
+): ErrorMessage() {
+
+}
 
 
 data class Results(
@@ -23,7 +25,4 @@ data class Results(
     @SerializedName("dateModified") var dateModified: String? = null
 )
 
-data class Error(
-    @SerializedName("statusCode") var statusCode: String? = null,
-    @SerializedName("statusMessage") var statusMessage: String? = null
-)
+open class ErrorMessage(message: String = "Something went wrong") {}
