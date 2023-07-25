@@ -1,12 +1,36 @@
 package com.example.mvvmapp.view
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.mvvmapp.R
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import com.example.mvvmapp.databinding.ActivityMainBinding
+import com.example.mvvmapp.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
+    lateinit var binding: ActivityMainBinding
+    lateinit var mainViewModel: MainViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        apiCall()
+        getData()
+    }
+
+    private fun apiCall(){
+//        Handler(Looper.myLooper()!!).postDelayed({
+            mainViewModel.getQuotes()
+//        },5000)
+    }
+
+    private fun getData(){
+        mainViewModel.getData().observe(this) {
+            Log.d("water", it?.results.toString())
+            binding.txtText.text= it!!.results[2].content.toString()
+        }
     }
 }
