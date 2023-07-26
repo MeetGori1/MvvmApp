@@ -9,6 +9,7 @@ import com.example.mvvmapp.databinding.ActivityMainBinding
 import com.example.mvvmapp.model.ImageItem
 import com.example.mvvmapp.adapter.DiffUtilListAdapter
 import com.example.mvvmapp.viewmodel.MainViewModel
+import com.example.mvvmapp.viewmodel.MainViewModelFactory
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -23,14 +24,15 @@ class MainActivity : AppCompatActivity() {
         adapter = DiffUtilListAdapter()
         binding.rwRecyclerView.adapter = adapter
         list = ArrayList()
-        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        mainViewModel = ViewModelProvider(this, MainViewModelFactory(1,2))[MainViewModel::class.java]
+        mainViewModel.page=1
+        mainViewModel.perPage=100
         apiCall()
     }
 
     private fun apiCall() {
-        mainViewModel.getQuotes(1, 10).observe(this) {
+        mainViewModel.results.observe(this) {
             when (it) {
-
                 is Results.Error -> {
                     Toast.makeText(this, it.errorMessage?.errors?.get(0)?.toString() ?: "water", Toast.LENGTH_LONG)
                         .show()
@@ -40,7 +42,7 @@ class MainActivity : AppCompatActivity() {
                     if (it.data!!.isNotEmpty()) {
                         Toast.makeText(
                             this,
-                            it.data!![0].description,
+                            it.data[0].description,
                             Toast.LENGTH_SHORT
                         ).show()
                         for (i in it.data){

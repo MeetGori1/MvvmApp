@@ -13,7 +13,7 @@ interface ApiService {
         "${Constants.AUTHORIZATION} ${Constants.CLIENT_ID}")
     @GET(END_POINT)
     suspend fun getData(
-        @Query("page1") page: Int,
-        @Query("per_page1") per_page: Int,
+        @Query("page") page: Int,
+        @Query("per_page") per_page: Int,
     ): Response<List<ImageItem>>
 }
