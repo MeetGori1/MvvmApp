@@ -24,8 +24,6 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical"
         android:scrollIndicators="right"
-        app:spanCount="4"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         tools:listitem="@layout/item_unsplash_image"
         android:scrollbarThumbVertical="@color/black"
         />
