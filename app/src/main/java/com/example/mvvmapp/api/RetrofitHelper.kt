@@ -7,8 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 object RetrofitHelper {
-    private const val BASE_URL = "https://quotable.io/"
-
+    private const val BASE_URL = "https://api.unsplash.com/"
     fun getInstance(): ApiService {
         val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
