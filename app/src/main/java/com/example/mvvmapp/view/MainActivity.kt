@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.mvvmapp.api.Results
 import com.example.mvvmapp.databinding.ActivityMainBinding
 import com.example.mvvmapp.model.ImageItem
-import com.example.mvvmapp.view.adapter.DiffUtilListAdapter
+import com.example.mvvmapp.adapter.DiffUtilListAdapter
 import com.example.mvvmapp.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
             when (it) {
 
                 is Results.Error -> {
-                    Toast.makeText(this, it.errorMessage?.errors?.toString(), Toast.LENGTH_LONG)
+                    Toast.makeText(this, it.errorMessage?.errors?.get(0)?.toString() ?: "water", Toast.LENGTH_LONG)
                         .show()
                 }
 
