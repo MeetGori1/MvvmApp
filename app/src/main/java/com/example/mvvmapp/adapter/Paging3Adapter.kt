@@ -2,6 +2,7 @@ package com.example.mvvmapp.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -12,19 +13,22 @@ import com.example.mvvmapp.databinding.ItemUnsplashImageBinding
 import com.example.mvvmapp.model.ImageItem
 
 
-class DiffUtilListAdapter() : ListAdapter<ImageItem, DiffUtilListAdapter.ViewHolder>(ImageDiffUtil) {
+class Paging3Adapter() : PagingDataAdapter<ImageItem, Paging3Adapter.PagingViewHolder>(ImagePagingDiffUtil) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagingViewHolder {
         var binding = ItemUnsplashImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding)
+        return PagingViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val user = getItem(position)
-        holder.setData(user)
-    }
 
-    class ViewHolder(private val binding: ItemUnsplashImageBinding) :
+    override fun onBindViewHolder(holder: Paging3Adapter.PagingViewHolder, position: Int) {
+        val item: ImageItem? = getItem(position)
+        item?.let {
+            holder.setData(item)
+        }
+    }
+    class PagingViewHolder(private val binding: ItemUnsplashImageBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun setData(item: ImageItem) {
             binding.apply {
@@ -38,7 +42,7 @@ class DiffUtilListAdapter() : ListAdapter<ImageItem, DiffUtilListAdapter.ViewHol
 }
 
 
-object ImageDiffUtil : DiffUtil.ItemCallback<ImageItem>() {
+object ImagePagingDiffUtil : DiffUtil.ItemCallback<ImageItem>() {
     override fun areItemsTheSame(oldItem: ImageItem, newItem: ImageItem): Boolean {
         return oldItem == newItem
     }
@@ -46,4 +50,6 @@ object ImageDiffUtil : DiffUtil.ItemCallback<ImageItem>() {
     override fun areContentsTheSame(oldItem: ImageItem, newItem: ImageItem): Boolean {
         return oldItem.id == newItem.id
     }
+
 }
+

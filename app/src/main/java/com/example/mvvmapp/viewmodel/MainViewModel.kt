@@ -1,10 +1,7 @@
 package com.example.mvvmapp.viewmodel
 
-import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.example.mvvmapp.api.ParserHelper
 import com.example.mvvmapp.api.Results
