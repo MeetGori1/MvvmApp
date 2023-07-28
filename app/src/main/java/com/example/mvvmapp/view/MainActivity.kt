@@ -1,14 +1,18 @@
 package com.example.mvvmapp.view
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import com.example.mvvmapp.adapter.DiffUtilListAdapter
 import com.example.mvvmapp.adapter.LoadingStateAdapter
@@ -21,6 +25,7 @@ import com.example.mvvmapp.paging3.PagingViewModel
 import com.example.mvvmapp.repository.QuoteRepository
 import com.example.mvvmapp.viewmodel.MainViewModel
 import com.example.mvvmapp.viewmodel.MainViewModelFactory
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -47,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         var list: ArrayList<ImageItem>? = null
         adapter = DiffUtilListAdapter()
         binding.rwRecyclerView.adapter = adapter
-        binding.layoutLoading.root.isVisible=false
+        binding.layoutLoading.root.isVisible = false
         list = ArrayList()
         mainViewModel =
             ViewModelProvider(this, MainViewModelFactory(1, 2))[MainViewModel::class.java]
@@ -88,36 +93,58 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun apiCallPaging() {
-
         val snapHelper: SnapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(binding.rwRecyclerView)
-
         paging3adapter = Paging3Adapter()
         binding.layoutLoading.retryButton.setOnClickListener {
             paging3adapter.retry()
         }
 
-        binding.btnRefresh.setOnClickListener {
-            paging3adapter.refresh()
+        binding.refreshLayout.setOnRefreshListener {
+//            paging3adapter.submitData(lifecycle, PagingData.empty())
+//            paging3adapter.refresh()
+            paging3adapter.submitData(lifecycle, PagingData.empty())
+//            Handler(Looper.myLooper()!!).postDelayed({
+            lifecycleScope.launch {
+                paginngViewModel.getImages()
+
+
+            }
+//            }, 2000)
+
+
         }
+
 //        paging3adapter.withLoadStateHeaderAndFooter(
 //            header = LoadingStateAdapter(paging3adapter),
 //            footer = LoadingStateAdapter(paging3adapter)
 //        )
         binding.rwRecyclerView.apply {
             val footerAdapter =
-                paging3adapter.withLoadStateFooter(LoadingStateAdapter(paging3adapter))
+                paging3adapter.withLoadStateHeaderAndFooter(
+                    header = LoadingStateAdapter(paging3adapter),
+                    footer = LoadingStateAdapter(paging3adapter)
+                )
             adapter = footerAdapter
         }
         repository = QuoteRepository()
         paginngViewModel =
-            ViewModelProvider(this, PagingModelFactory(1, 20))[PagingViewModel::class.java]
+            ViewModelProvider(this, PagingModelFactory(1, 2))[PagingViewModel::class.java]
+
+        paginngViewModel.getImages()
 
         lifecycleScope.launch {
-            // for use with kotlin flow
-            paginngViewModel.images.collectLatest {
-                paging3adapter.submitData(it)
+            paginngViewModel.results.observe(this@MainActivity) {
+                paging3adapter.submitData(lifecycle, it)
+                binding.refreshLayout.isRefreshing = false
             }
+
+            // for use with kotlin flow
+//            paginngViewModel.images.collectLatest {
+//                Toast.makeText(this@MainActivity, "new Data", Toast.LENGTH_SHORT).show()
+//                paging3adapter.submitData(it)
+//                binding.refreshLayout.isRefreshing = false
+//            }
 
             // for use with live data
 //            paginngViewModel.images.observe(this@MainActivity) {
@@ -136,7 +163,7 @@ class MainActivity : AppCompatActivity() {
                     /**
                      * Setting up the views as per your requirement
                      */
-                    binding.layoutLoading.root.isVisible=false
+                    binding.layoutLoading.root.isVisible = false
 //                    Toast.makeText(this, "NotLoading", Toast.LENGTH_SHORT).show()
                 }
 
@@ -146,8 +173,8 @@ class MainActivity : AppCompatActivity() {
                      */
                     binding.layoutLoading.apply {
                         errorMsg.isVisible = false
-                        retryButton.isVisible=false
-                      progressBar.isVisible=true
+                        retryButton.isVisible = false
+                        progressBar.isVisible = true
                     }
 //                    Toast.makeText(this, "Loading", Toast.LENGTH_SHORT).show()
                 }
@@ -156,12 +183,12 @@ class MainActivity : AppCompatActivity() {
                     /**
                      * Setting up the views as per your requirement
                      */
-                    binding.layoutLoading.root.isVisible=true
+                    binding.layoutLoading.root.isVisible = true
                     binding.layoutLoading.apply {
                         errorMsg.isVisible = true
-                        retryButton.isVisible=true
-                        progressBar.isVisible=false
-                        errorMsg.text=state.error.message.orEmpty()
+                        retryButton.isVisible = true
+                        progressBar.isVisible = false
+                        errorMsg.text = state.error.message.orEmpty()
                     }
 
 //                    Toast.makeText(this, state.error.message.orEmpty(), Toast.LENGTH_SHORT).show()

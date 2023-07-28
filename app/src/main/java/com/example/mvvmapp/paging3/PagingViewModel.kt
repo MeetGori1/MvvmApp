@@ -17,15 +17,21 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class PagingViewModel(var page: Int, var perPage: Int) : ViewModel() {
-    var results = MutableLiveData<Results<ImageItem>>()
+    var results = MutableLiveData<PagingData<ImageItem>>()
 
-    private val repository: QuoteRepository by lazy {
+    val repository: QuoteRepository by lazy {
         QuoteRepository()
     }
 
-    val images: Flow<PagingData<ImageItem>> = Pager(PagingConfig(pageSize = perPage, enablePlaceholders = false)) {
-        CharactersPagingDataSource(repository,perPage)
-    }.flow.cachedIn(viewModelScope)
+    fun getImages() {
+        viewModelScope.launch {
+            Pager(PagingConfig(pageSize = perPage, enablePlaceholders = false)) {
+                CharactersPagingDataSource(repository, perPage)
+            }.flow.cachedIn(viewModelScope).collect {
+                results.postValue(it)
+            }
+        }
+    }
 
 //    val images: LiveData<PagingData<ImageItem>> = Pager(PagingConfig(pageSize = 20)) {
 //        CharactersPagingDataSource(repository)
