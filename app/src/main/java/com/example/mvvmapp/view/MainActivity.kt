@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity() {
                      * Setting up the views as per your requirement
                      */
                     binding.layoutLoading.root.isVisible=false
-                    Toast.makeText(this, "NotLoading", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this, "NotLoading", Toast.LENGTH_SHORT).show()
                 }
 
                 is LoadState.Loading -> {
@@ -149,7 +149,7 @@ class MainActivity : AppCompatActivity() {
                         retryButton.isVisible=false
                       progressBar.isVisible=true
                     }
-                    Toast.makeText(this, "Loading", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this, "Loading", Toast.LENGTH_SHORT).show()
                 }
 
                 is LoadState.Error -> {
