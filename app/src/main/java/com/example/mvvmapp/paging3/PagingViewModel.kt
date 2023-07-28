@@ -24,7 +24,7 @@ class PagingViewModel(var page: Int, var perPage: Int) : ViewModel() {
     }
 
     val images: Flow<PagingData<ImageItem>> = Pager(PagingConfig(pageSize = perPage, enablePlaceholders = false)) {
-        CharactersPagingDataSource(repository)
+        CharactersPagingDataSource(repository,perPage)
     }.flow.cachedIn(viewModelScope)
 
 //    val images: LiveData<PagingData<ImageItem>> = Pager(PagingConfig(pageSize = 20)) {

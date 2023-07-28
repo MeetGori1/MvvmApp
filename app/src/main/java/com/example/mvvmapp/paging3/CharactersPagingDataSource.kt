@@ -13,6 +13,7 @@ import java.io.IOException
 
 class CharactersPagingDataSource(
     private val dataRepository: QuoteRepository,
+    private val perPage:Int
 ) :
     PagingSource<Int, ImageItem>() {
     companion object {
@@ -22,7 +23,7 @@ class CharactersPagingDataSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ImageItem> {
         val pageNumber = params.key ?: 1
         return try {
-            val response = dataRepository.getImages(pageNumber, params.loadSize)
+            val response = dataRepository.getImages(pageNumber, perPage)
             val result = response.body()
 
             val prevKey = if (pageNumber == STARTING_PAGE_INDEX) null else pageNumber - 1
