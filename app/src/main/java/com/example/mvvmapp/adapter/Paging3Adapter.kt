@@ -17,10 +17,9 @@ class Paging3Adapter() : PagingDataAdapter<ImageItem, Paging3Adapter.PagingViewH
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagingViewHolder {
-        var binding = ItemUnsplashImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemUnsplashImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PagingViewHolder(binding)
     }
-
 
     override fun onBindViewHolder(holder: Paging3Adapter.PagingViewHolder, position: Int) {
         val item: ImageItem? = getItem(position)
@@ -28,17 +27,18 @@ class Paging3Adapter() : PagingDataAdapter<ImageItem, Paging3Adapter.PagingViewH
             holder.setData(item)
         }
     }
+
     class PagingViewHolder(private val binding: ItemUnsplashImageBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun setData(item: ImageItem) {
             binding.apply {
                 Glide.with(itemView.context).load(item.urls.regular)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .error(R.drawable.ic_launcher_background)
+                    .error(androidx.databinding.library.baseAdapters.R.drawable.abc_ab_share_pack_mtrl_alpha)
                     .into(binding.imgImageView)
             }
         }
-        }
+    }
 }
 
 

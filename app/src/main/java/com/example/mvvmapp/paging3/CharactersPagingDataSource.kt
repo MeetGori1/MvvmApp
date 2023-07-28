@@ -33,7 +33,7 @@ class CharactersPagingDataSource(
             }
             return LoadResult.Page(data = result ?: mutableListOf(), prevKey, nextKey)
         } catch (e: IOException) {
-            LoadResult.Error(e)
+            LoadResult.Error(Exception("Something went Wrong"))
         } catch (e: HttpException) {
             LoadResult.Error(e)
         } catch (e: PagingCustomException) {

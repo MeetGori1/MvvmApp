@@ -1,6 +1,6 @@
 package com.example.mvvmapp.api
 
-import com.example.unsplashdemo.Utils.Constants
+import com.example.mvvmapp.utils.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

@@ -1,17 +1,21 @@
 package com.example.mvvmapp.view
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.SnapHelper
+import com.example.mvvmapp.adapter.DiffUtilListAdapter
+import com.example.mvvmapp.adapter.LoadingStateAdapter
+import com.example.mvvmapp.adapter.Paging3Adapter
 import com.example.mvvmapp.api.Results
 import com.example.mvvmapp.databinding.ActivityMainBinding
 import com.example.mvvmapp.model.ImageItem
-import com.example.mvvmapp.adapter.DiffUtilListAdapter
-import com.example.mvvmapp.adapter.Paging3Adapter
 import com.example.mvvmapp.paging3.PagingModelFactory
 import com.example.mvvmapp.paging3.PagingViewModel
 import com.example.mvvmapp.repository.QuoteRepository
@@ -43,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         var list: ArrayList<ImageItem>? = null
         adapter = DiffUtilListAdapter()
         binding.rwRecyclerView.adapter = adapter
+        binding.layoutLoading.root.isVisible=false
         list = ArrayList()
         mainViewModel =
             ViewModelProvider(this, MainViewModelFactory(1, 2))[MainViewModel::class.java]
@@ -84,8 +89,26 @@ class MainActivity : AppCompatActivity() {
 
     private fun apiCallPaging() {
 
+        val snapHelper: SnapHelper = PagerSnapHelper()
+        snapHelper.attachToRecyclerView(binding.rwRecyclerView)
+
         paging3adapter = Paging3Adapter()
-        binding.rwRecyclerView.adapter = paging3adapter
+        binding.layoutLoading.retryButton.setOnClickListener {
+            paging3adapter.retry()
+        }
+
+        binding.btnRefresh.setOnClickListener {
+            paging3adapter.refresh()
+        }
+//        paging3adapter.withLoadStateHeaderAndFooter(
+//            header = LoadingStateAdapter(paging3adapter),
+//            footer = LoadingStateAdapter(paging3adapter)
+//        )
+        binding.rwRecyclerView.apply {
+            val footerAdapter =
+                paging3adapter.withLoadStateFooter(LoadingStateAdapter(paging3adapter))
+            adapter = footerAdapter
+        }
         repository = QuoteRepository()
         paginngViewModel =
             ViewModelProvider(this, PagingModelFactory(1, 20))[PagingViewModel::class.java]
@@ -106,12 +129,14 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        paging3adapter.addLoadStateListener{ loadState ->
+
+        paging3adapter.addLoadStateListener { loadState ->
             when (val state = loadState.source.refresh) {
                 is LoadState.NotLoading -> {
                     /**
                      * Setting up the views as per your requirement
                      */
+                    binding.layoutLoading.root.isVisible=false
                     Toast.makeText(this, "NotLoading", Toast.LENGTH_SHORT).show()
                 }
 
@@ -119,7 +144,11 @@ class MainActivity : AppCompatActivity() {
                     /**
                      * Setting up the views as per your requirement
                      */
-
+                    binding.layoutLoading.apply {
+                        errorMsg.isVisible = false
+                        retryButton.isVisible=false
+                      progressBar.isVisible=true
+                    }
                     Toast.makeText(this, "Loading", Toast.LENGTH_SHORT).show()
                 }
 
@@ -127,8 +156,15 @@ class MainActivity : AppCompatActivity() {
                     /**
                      * Setting up the views as per your requirement
                      */
+                    binding.layoutLoading.root.isVisible=true
+                    binding.layoutLoading.apply {
+                        errorMsg.isVisible = true
+                        retryButton.isVisible=true
+                        progressBar.isVisible=false
+                        errorMsg.text=state.error.message.orEmpty()
+                    }
 
-                    Toast.makeText(this, state.error.message.orEmpty(), Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this, state.error.message.orEmpty(), Toast.LENGTH_SHORT).show()
 //                    Youractivity?.showMessage()
                 }
             }
