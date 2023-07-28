@@ -23,7 +23,7 @@ class PagingViewModel(var page: Int, var perPage: Int) : ViewModel() {
         QuoteRepository()
     }
 
-    val images: Flow<PagingData<ImageItem>> = Pager(PagingConfig(pageSize = perPage)) {
+    val images: Flow<PagingData<ImageItem>> = Pager(PagingConfig(pageSize = perPage, enablePlaceholders = false)) {
         CharactersPagingDataSource(repository)
     }.flow.cachedIn(viewModelScope)
 

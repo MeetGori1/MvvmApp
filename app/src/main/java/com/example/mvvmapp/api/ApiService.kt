@@ -3,6 +3,7 @@ package com.example.mvvmapp.api
 import com.example.mvvmapp.model.ImageItem
 import com.example.unsplashdemo.Utils.Constants
 import com.example.unsplashdemo.Utils.Constants.END_POINT
+import com.example.unsplashdemo.Utils.Constants.END_POINT_SEARCH
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers

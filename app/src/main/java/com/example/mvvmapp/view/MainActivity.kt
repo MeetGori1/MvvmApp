@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
 //                            Toast.LENGTH_SHORT
 //                        ).show()
                         for (i in it.data) {
-                            list?.add(i)
+                            list.add(i)
                         }
                         adapter.submitList(list)
                     } else {
@@ -82,13 +82,13 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun apiCallPaging() {
+    private fun apiCallPaging() {
 
         paging3adapter = Paging3Adapter()
         binding.rwRecyclerView.adapter = paging3adapter
         repository = QuoteRepository()
         paginngViewModel =
-            ViewModelProvider(this, PagingModelFactory(1, 2))[PagingViewModel::class.java]
+            ViewModelProvider(this, PagingModelFactory(1, 20))[PagingViewModel::class.java]
 
         lifecycleScope.launch {
             // for use with kotlin flow
@@ -104,13 +104,15 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        paging3adapter.addLoadStateListener { loadState ->
+
+
+        paging3adapter.addLoadStateListener{ loadState ->
             when (val state = loadState.source.refresh) {
                 is LoadState.NotLoading -> {
                     /**
                      * Setting up the views as per your requirement
                      */
-                    Toast.makeText(this, state.toString(), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "NotLoading", Toast.LENGTH_SHORT).show()
                 }
 
                 is LoadState.Loading -> {
@@ -118,7 +120,7 @@ class MainActivity : AppCompatActivity() {
                      * Setting up the views as per your requirement
                      */
 
-                    Toast.makeText(this, state.toString(), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Loading", Toast.LENGTH_SHORT).show()
                 }
 
                 is LoadState.Error -> {
@@ -131,6 +133,39 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+
     }
+//    private fun setLoadingState() {
+//        adapterNotification?.addLoadStateListener {
+//            if (it.source.append !is LoadState.Loading && it.source.prepend !is LoadState.Loading) {
+//                when (it.source.refresh) {
+//                    is LoadState.Loading -> {
+//                        if (adapterNotification?.itemCount == 0) {
+//                            mBinding.rvListing.hide()
+//                            mBinding.txtError.hide()
+//                            mBinding.animatedLoader.show()
+//                        } else {
+//                            mBinding.rvListing.show()
+//                            mBinding.txtError.hide()
+//                            mBinding.animatedLoader.hide()
+//                        }
+//                    }
+//                    is LoadState.Error -> {
+//                        mBinding.animatedLoader.hide()
+//                        mBinding.txtError.show()
+//                        mBinding.txtError.text = getString(R.string.currently_your_notification_list_is_empty)
+//                        //mBinding.txtError.text = (it.source.refresh as LoadState.Error).error.localizedMessage
+//                        mBinding.rvListing.hide()
+//                    }
+//                    else -> {
+//                        mBinding.rvListing.show()
+//                        mBinding.txtError.hide()
+//                        mBinding.animatedLoader.hide()
+//                    }
+//                }
+//            }
+//        }
+//    }
 }
 

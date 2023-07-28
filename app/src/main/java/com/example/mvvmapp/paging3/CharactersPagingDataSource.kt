@@ -1,16 +1,19 @@
 package com.example.mvvmapp.paging3
 
-import android.net.Uri
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.bumptech.glide.load.engine.Resource
-import com.example.mvvmapp.api.ApiService
+import com.example.mvvmapp.utils.PagingCustomException
+import com.example.mvvmapp.api.ParserHelper
+import com.example.mvvmapp.api.Results
 import com.example.mvvmapp.model.ImageItem
 import com.example.mvvmapp.repository.QuoteRepository
-import kotlin.math.log
+import retrofit2.HttpException
+import java.io.IOException
 
-class CharactersPagingDataSource(private val dataRepository: QuoteRepository) :
+class CharactersPagingDataSource(
+    private val dataRepository: QuoteRepository,
+) :
     PagingSource<Int, ImageItem>() {
     companion object {
         private const val STARTING_PAGE_INDEX = 1
@@ -18,17 +21,33 @@ class CharactersPagingDataSource(private val dataRepository: QuoteRepository) :
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ImageItem> {
         val pageNumber = params.key ?: 1
+        return try {
+            val response = dataRepository.getImages(pageNumber, params.loadSize)
+            val result = response.body()
 
-        val result: List<ImageItem> = dataRepository.getImages(pageNumber, params.loadSize).body() as  List<ImageItem>
-        return LoadResult.Page(
-            data = result,
-            prevKey = if (pageNumber == STARTING_PAGE_INDEX) null else pageNumber - 1,
-            nextKey = pageNumber + 1
-        )
+            val prevKey = if (pageNumber == STARTING_PAGE_INDEX) null else pageNumber - 1
+            val nextKey = pageNumber + 1
+            if (result == null) {
+//                LoadResult.Error<String,Any>(Exception("Data Not Found"))
+                validData(Results.Error<ImageItem>(ParserHelper.baseError(response.errorBody())))
+            }
+            return LoadResult.Page(data = result ?: mutableListOf(), prevKey, nextKey)
+        } catch (e: IOException) {
+            LoadResult.Error(e)
+        } catch (e: HttpException) {
+            LoadResult.Error(e)
+        } catch (e: PagingCustomException) {
+            LoadResult.Error(e)
+        } catch (e: Exception) {
+            LoadResult.Error(e)
+        }
+    }
+
+    fun validData(error: Results.Error<ImageItem>) {
+        throw PagingCustomException(error.errorMessage)
     }
 
     override fun getRefreshKey(state: PagingState<Int, ImageItem>): Int? {
-        Log.e("refresh","refresh")
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)

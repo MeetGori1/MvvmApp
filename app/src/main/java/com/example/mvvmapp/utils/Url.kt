@@ -1,4 +1,4 @@
-package com.example.mvvmapp.Utils
+package com.example.mvvmapp.utils
 
 object Url {
     // response code
