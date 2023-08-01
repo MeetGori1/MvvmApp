@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         binding.layoutLoading.root.isVisible = false
         list = ArrayList()
         mainViewModel =
-            ViewModelProvider(this, MainViewModelFactory(1, 2))[MainViewModel::class.java]
+            ViewModelProvider(this, MainViewModelFactory(1, 20))[MainViewModel::class.java]
         mainViewModel.results.observe(this) {
             when (it) {
                 is Results.Error -> {
@@ -128,8 +128,7 @@ class MainActivity : AppCompatActivity() {
             adapter = footerAdapter
         }
         repository = QuoteRepository()
-        paginngViewModel =
-            ViewModelProvider(this, PagingModelFactory(1, 2))[PagingViewModel::class.java]
+        paginngViewModel = ViewModelProvider(this, PagingModelFactory(1, 24))[PagingViewModel::class.java]
 
         paginngViewModel.getImages()
 

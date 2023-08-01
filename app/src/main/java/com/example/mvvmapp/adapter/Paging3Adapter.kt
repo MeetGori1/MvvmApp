@@ -2,6 +2,8 @@ package com.example.mvvmapp.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.databinding.BindingAdapter
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -31,12 +33,24 @@ class Paging3Adapter() : PagingDataAdapter<ImageItem, Paging3Adapter.PagingViewH
     class PagingViewHolder(private val binding: ItemUnsplashImageBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun setData(item: ImageItem) {
-            binding.apply {
-                Glide.with(itemView.context).load(item.urls.regular)
+            binding.imageItem=item.urls
+
+//            binding.apply {
+//                Glide.with(itemView.context).load(item.urls.regular)
+//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                    .error(androidx.databinding.library.baseAdapters.R.drawable.abc_ab_share_pack_mtrl_alpha)
+//                    .into(binding.imgImageView)
+//            }
+        }
+    }
+    companion object{
+        @JvmStatic
+        @BindingAdapter("image")
+        fun loadImage(view:ImageView,url:String){
+            Glide.with(view.context).load(url)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .error(androidx.databinding.library.baseAdapters.R.drawable.abc_ab_share_pack_mtrl_alpha)
-                    .into(binding.imgImageView)
-            }
+                    .into(view)
         }
     }
 }
@@ -52,4 +66,6 @@ object ImagePagingDiffUtil : DiffUtil.ItemCallback<ImageItem>() {
     }
 
 }
+
+
 
