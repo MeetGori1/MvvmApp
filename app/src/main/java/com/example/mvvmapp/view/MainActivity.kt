@@ -1,5 +1,6 @@
 package com.example.mvvmapp.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,6 +15,7 @@ import androidx.paging.PagingData
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
+import com.example.mvvmapp.DataBindingActivity
 import com.example.mvvmapp.adapter.DiffUtilListAdapter
 import com.example.mvvmapp.adapter.LoadingStateAdapter
 import com.example.mvvmapp.adapter.Paging3Adapter
@@ -46,6 +48,11 @@ class MainActivity : AppCompatActivity() {
 //        apiCall()
 //        to load data with paging 3
         apiCallPaging()
+
+        binding.btnNext.setOnClickListener {
+            val intent=Intent(this,DataBindingActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun apiCall() {
@@ -172,7 +179,7 @@ class MainActivity : AppCompatActivity() {
                      */
                     binding.layoutLoading.apply {
                         errorMsg.isVisible = false
-                        retryButton.isVisible = false
+                        retryButton.isVisible = f`alse
                         progressBar.isVisible = true
                     }
 //                    Toast.makeText(this, "Loading", Toast.LENGTH_SHORT).show()
