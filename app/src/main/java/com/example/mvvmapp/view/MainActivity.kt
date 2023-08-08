@@ -2,9 +2,6 @@ package com.example.mvvmapp.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -13,9 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.PagerSnapHelper
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
-import com.example.mvvmapp.DataBindingActivity
 import com.example.mvvmapp.adapter.DiffUtilListAdapter
 import com.example.mvvmapp.adapter.LoadingStateAdapter
 import com.example.mvvmapp.adapter.Paging3Adapter
@@ -27,8 +22,6 @@ import com.example.mvvmapp.paging3.PagingViewModel
 import com.example.mvvmapp.repository.QuoteRepository
 import com.example.mvvmapp.viewmodel.MainViewModel
 import com.example.mvvmapp.viewmodel.MainViewModelFactory
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -50,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         apiCallPaging()
 
         binding.btnNext.setOnClickListener {
-            val intent=Intent(this,DataBindingActivity::class.java)
+            val intent=Intent(this, DataBindingActivity::class.java)
             startActivity(intent)
         }
     }
@@ -179,7 +172,7 @@ class MainActivity : AppCompatActivity() {
                      */
                     binding.layoutLoading.apply {
                         errorMsg.isVisible = false
-                        retryButton.isVisible = f`alse
+                        retryButton.isVisible = false
                         progressBar.isVisible = true
                     }
 //                    Toast.makeText(this, "Loading", Toast.LENGTH_SHORT).show()
